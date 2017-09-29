@@ -51,7 +51,7 @@ class Expression:
                         self.fn = Expression.Trigreplace(self.fn,i,'b')
                     if self.fn[i]+self.fn[i+1]+self.fn[i+2] == 'tan':
                         self.fn = Expression.Trigreplace(self.fn,i,'c')
-                    if self.fn[i]+self.fn[i+1]+self.fn[i+2] == 'cosec':
+                    if self.fn[i]+self.fn[i+1]+self.fn[i+2] == 'csc':
                         self.fn = Expression.Trigreplace(self.fn,i,'d')
                     if self.fn[i]+self.fn[i+1]+self.fn[i+2] == 'sec':
                         self.fn = Expression.Trigreplace(self.fn,i,'e')
