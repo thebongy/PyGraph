@@ -2,6 +2,8 @@
 Classes required to construct an expression using post-fix
 '''
 
+from raw_expr import Unit, ObjectRepresentation
+
 class UnderflowException(Exception):
     '''
     Raised when any element access operation is attempted on
@@ -63,8 +65,7 @@ class Expression(object):
     def __init__(self, expr):
         self.expr = expr
 
-
-class Operator(object):
+class Operator(Unit):
     pass
 
 
@@ -76,12 +77,12 @@ class BinaryOperator(Operator):
     pass
 
 
-class Variable(object):
+class Variable(Unit):
     pass
 
 
-class Constant(object):
+class Constant(Unit):
     pass
 
-class Function(object):
+class Function(Unit):
     pass
