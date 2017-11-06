@@ -2,12 +2,27 @@
 Defines multiple operators and their actions.
 '''
 
-from components import BinaryOperator,UnaryOperator
+BINARY_OPERATORS = {
+        "+":lambda x,y:x+y,
+        "-":lambda x,y:x-y,
+        "*":lambda x,y:x*y,
+        "/":lambda x,y:x/y,
+        "^":lambda x,y:x**y,
+        }
 
-class Add(BinaryOperator):
-    def evaluate(self,arg1,arg2):
-        return arg1+arg2
+UNARY_OPERATORS = {
+        "-": lambda x:-x
+        }
 
+def add_binary_operator(char, func, binary = True):
+    '''
+    Add a custom operator
+    '''
+    if len(char) != 1:
+        raise ValueError("Identifier for an operator must be just a character!")
 
-class Subtract(BinaryOperator):
-    pass
+    if binary:
+        BINARY_OPERATORS[char] = func
+    else:
+        UNARY_OPERATORS[char] = func
+
