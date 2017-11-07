@@ -1,3 +1,5 @@
+
+
 '''
 Classes required to construct an expression using post-fix
 '''
@@ -161,8 +163,9 @@ class Constant(Unit):
         return self.value
 
 class Function(Unit):
-    def __init__(self, data, start, end, func):
+    def __init__(self, data, start, end, func, stuffinside):
         Unit.__init__(self, data, start, end)
         self.func = func
+        self.inside = stuffinside
     def evaluate(x):
         return self.func(self.expr.evaluate(x))

@@ -32,21 +32,22 @@ class ObjectRepresentation(object):
                     
 
                 if self.string_repr[i] == 'x':
-                    TestL.append(Variable('x',i,len(i+1))                                             
+                    TestL.append(Variable('x',i,i+1))                                                                     #                         
 
                 for j in DictofUOp:
                     if self.string_repr[i] = j and (self.string_repr[i] in ['('] and self.string_repr[i] in DictofBOp) :
-                        TestL.append(UnaryOperator(j, i, i+1, DictofUOp[0], DictofUOp[1]))                         
+                        TestL.append(UnaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))                         #change5
 
                 for j in DictofBOp:
                     if self.string_repr[i] = j:
-                        TestL.append(BinaryOperator(j, i, i+1, DictofUOp[0], DictofUOp[1]))
+                        TestL.append(BinaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))
                         
 
                 for j in Dictoffns:
                     if self.string_repr[i:(i+len(j))] = j:
                         data1 = j                                                                                 
                         start1 = i
+                        fnvar = False
 
                 #afterfn do const
                 elif self.string_repr[i] in Lofconst:
@@ -57,6 +58,8 @@ class ObjectRepresentation(object):
                     end1 = i
                     #end2 = len(data1)+len(stuff)+1 ignore
                     TestL.append(Function(data1, start1, end1, Dictoffns[data1], stuff))
+                    fnvar = True
+                                 
                 
 
 class Unit(Object):
