@@ -14,7 +14,7 @@ UNARY_OPERATORS = {
         "-": {"priority":-1, "func":lambda x:-x}
         }
 
-def add_binary_operator(char, func, binary = True):
+def add_binary_operator(char, func, priority, binary = True):
     '''
     Add a custom operator
     '''
@@ -22,7 +22,7 @@ def add_binary_operator(char, func, binary = True):
         raise ValueError("Identifier for an operator must be just a character!")
 
     if binary:
-        BINARY_OPERATORS[char] = func
+        BINARY_OPERATORS[char] = {"priority":priority, "func":func}
     else:
-        UNARY_OPERATORS[char] = func
+        UNARY_OPERATORS[char] = {"priority":priority, "func":func}
 
