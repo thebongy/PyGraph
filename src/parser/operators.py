@@ -3,15 +3,15 @@ Defines multiple operators and their actions.
 '''
 
 BINARY_OPERATORS = {
-        "+":lambda x,y:x+y,
-        "-":lambda x,y:x-y,
-        "*":lambda x,y:x*y,
-        "/":lambda x,y:x/y,
-        "^":lambda x,y:x**y,
+        "+":{"priority":3, "func":lambda x,y:x+y},
+        "-":{"priority":4, "func":lambda x,y:x-y},
+        "*":{"priority":2, "func":lambda x,y:x*y},
+        "/":{"priority":1, "func":lambda x,y:x/y},
+        "^":{"priority":0, "func":lambda x,y:x**y},
         }
 
 UNARY_OPERATORS = {
-        "-": lambda x:-x
+        "-": {"priority":-1, "func":lambda x:-x}
         }
 
 def add_binary_operator(char, func, binary = True):
