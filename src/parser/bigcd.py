@@ -35,16 +35,16 @@ class ObjectRepresentation(object):
                     TestL.append(Variable('x',i,i+1))                                                                     #                         
 
                 for j in DictofUOp:
-                    if self.string_repr[i] = j and (self.string_repr[i] in ['('] and self.string_repr[i] in DictofBOp) :
+                    if self.string_repr[i] == j and (self.string_repr[i] in ['('] and self.string_repr[i] in DictofBOp) :
                         TestL.append(UnaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))                         #change5
 
                 for j in DictofBOp:
-                    if self.string_repr[i] = j:
+                    if self.string_repr[i] == j:
                         TestL.append(BinaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))
                         
 
                 for j in Dictoffns:
-                    if self.string_repr[i:(i+len(j))] = j:
+                    if self.string_repr[i:(i+len(j))] == j:
                         data1 = j                                                                                 
                         start1 = i
                         fnvar = False
