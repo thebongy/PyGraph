@@ -7,7 +7,7 @@ BINARY_OPERATORS = {
         "-":{"priority":4, "func":lambda x,y:x-y},
         "*":{"priority":2, "func":lambda x,y:x*y},
         "/":{"priority":1, "func":lambda x,y:x/y},
-        "^":{"priority":0, "func":lambda x,y:x**y},
+        "^":{"priority":0, "func":lambda x,y:x**y}
         }
 
 UNARY_OPERATORS = {
