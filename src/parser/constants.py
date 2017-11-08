@@ -6,8 +6,7 @@ import math
 
 CONSTANTS = {
         "e":math.e,
-        "pi":math.pi,
-        "tau": math.tau
+        "pi":math.pi
         }
 
 def add_constant(name, value):
