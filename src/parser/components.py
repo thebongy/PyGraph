@@ -1,8 +1,10 @@
-
-
 '''
 Classes required to construct an expression using post-fix
 '''
+from operators import BINARY_OPERATORS, UNARY_OPERATORS
+from functions import FUNCTIONS
+from constants import CONSTANTS
+from decimal import Decimal # For floating point calcluations
 
 class Unit(object):
     '''
@@ -31,41 +33,38 @@ class ObjectRepresentation(object):
 
     def construct(self):
         #new
-        TestL = []
+        self.expression = []
         bcnt = 0
         Blist = []
         Lofconst = []                                                                                              
-        Dictoffns ={}
         fnvar = True
-        DictofUOp = {}
-        DictofBOp = {}
-        for i in range(self.string_repr):
+        for i in range(len(self.string_repr)):
             if fnvar:
                 if self.string_repr[i] == '(':
-                    TestL.append('Dummy')
+                    self.expression.append('Dummy')
                     bcnt += 1
-                    Blist.append(len(TestL)-1)
+                    Blist.append(len(self.expression)-1)
                     
                 if self.string_repr[i] == ')':
                     posn = Blist.pop(-1)
-                    TestL[posn] = Parenthesis('(',posn,len(TestL),bcnt)
-                    TestL.append(Parenthesis(')',posn,len(TestL),bcnt))
+                    self.expression[posn] = Parenthesis('(',posn,len(self.expression),bcnt)
+                    self.expression.append(Parenthesis(')',posn,len(self.expression),bcnt))
                     bcnt -= 1
                     
 
                 if self.string_repr[i] == 'x':
-                    TestL.append(Variable('x',i,i+1))                                                                     #                         
+                    self.expression.append(Variable('x',i,i+1))                                                                     #                         
 
-                for j in DictofUOp:
-                    if self.string_repr[i] == j and (self.string_repr[i] in ['('] and self.string_repr[i] in DictofBOp) :
-                        TestL.append(UnaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))                         #change5
+                for j in UNARY_OPERATORS:
+                    if self.string_repr[i] == j and (self.string_repr[i] in ['('] and self.string_repr[i] in UNARY_OPERATORS) :
+                        self.expression.append(UnaryOperator(j, i, i+1, UNARY_OPERATORS[j]["func"], UNARY_OPERATORS[j]["priority"]))                         #change5
 
-                for j in DictofBOp:
+                for j in BINARY_OPERATORS:
                     if self.string_repr[i] == j:
-                        TestL.append(BinaryOperator(j, i, i+1, DictofUOp[j][0], DictofUOp[j][1]))
+                        self.expression.append(BinaryOperator(j, i, i+1, BINARY_OPERATORS[j]["func"], BINARY_OPERATORS[j]["priority"]))
                         
 
-                for j in Dictoffns:
+                for j in FUNCTIONS:
                     if self.string_repr[i:(i+len(j))] == j:
                         data1 = j                                                                                 
                         start1 = i
@@ -73,13 +72,13 @@ class ObjectRepresentation(object):
 
                 #afterfn do const
                 if self.string_repr[i] in Lofconst:
-                    TestL.append(Constant(self.string_repr[i],len(TestL),len(TestL)+1))
+                    self.expression.append(Constant(self.string_repr[i],len(self.expression),len(self.expression)+1))
             if not fnvar:
                 if i == ')':
                     stuff = self.string_repr[start1+len(data1)+1:i]
                     end1 = i
                     #end2 = len(data1)+len(stuff)+1 ignore
-                    TestL.append(Function(data1, start1, end1, Dictoffns[data1], stuff))
+                    self.expression.append(Function(data1, start1, end1, FUNCTIONS[data1], stuff))
                     fnvar = True
 
 class Parenthesis(Unit):
@@ -165,13 +164,13 @@ class PostfixExpression(object):
 
         self.opStack = Stack()
 
-        for obj in self.expr:
+        for obj in self.expr.expression:
             if isinstance(obj, Constant) or isinstance(obj, Variable) or isinstance(obj, Function):
                 self.postfix.append(obj)
             elif isinstance(obj, Parenthesis):
-                if Parenthesis.type == "OPENING":
+                if obj.type == "OPENING":
                     self.opStack.push(obj)
-                elif Parenthesis.type == "CLOSING":
+                elif obj.type == "CLOSING":
                     # NOTE FOR LATER:
                     # if an epxression has invalid parenthesis, the error can be caught here.
                     while not isinstance(self.opStack.top(), Parenthesis):
@@ -192,11 +191,13 @@ class PostfixExpression(object):
         '''
         Evaluate the postfix Expression for a given vakue of x.
         '''
+
+        x = Decimal(x) # VERY IMP
         evaluation = Stack()
         expression = list(self.postfix)
         for current in expression:
             if isinstance(current, Variable) or isinstance(current, Constant):
-                evaluation.push(current)
+                evaluation.push(current.evaluate(x))
             elif isinstance(current, BinaryOperator):
                 right = evaluation.pop()
                 left = evaluation.pop()
@@ -214,14 +215,18 @@ class Expression(object):
     '''
     def __init__(self, raw_expr):
         self.raw_expr = "(" + raw_expr + ")" # Standard postfix rules to add parenthesis.
-        self.expr = ObjectRepresentation(raw_expr)
+        self.expr = ObjectRepresentation(self.raw_expr)
         self.postfix = PostfixExpression(self.expr)
     def evaluate(self, x):
-        self.postfix.evaluate(x)
+        try:
+            return self.postfix.evaluate(x)
+        except UnderflowException as e:
+            raise ValueError("""Something went wrong while parsing the expression.
+            Either the expression is invalid, or it wasn't parsed correctly...""")
 
 class Operator(Unit):
     def __init__(self, data, start, end, func, priority):
-        Unit.__init__(self, data, start, end, func, priority)
+        Unit.__init__(self, data, start, end)
         self.func = func
         self.priority = priority
     def evaluate(self):
@@ -259,3 +264,14 @@ class Function(Unit):
         return self.func(self.expr.evaluate(x))
 
 
+# Expressions with only variables work:
+x = Expression("x^x^x+x^x+x")
+print x.evaluate(3)
+
+# Here is another one with brackets.
+
+y = Expression("((x+x)*x)+x^(x+x)")
+print y.evaluate(5)
+
+# It fails if you add any type of constant number, special math constants or function.............
+# (Rectify it xD.) 
