@@ -2,6 +2,7 @@
 Defines multiple operators and their actions.
 '''
 
+
 BINARY_OPERATORS = {
         "+":{"priority":3, "func":lambda x,y:x+y},
         "-":{"priority":4, "func":lambda x,y:x-y},

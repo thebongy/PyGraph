@@ -3,6 +3,7 @@ Defines significant well-known mathematical functions
 '''
 import math
 
+
 FUNCTIONS = {
         "sin":math.sin,
         "cos":math.cos,
