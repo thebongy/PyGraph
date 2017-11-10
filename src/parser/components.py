@@ -18,7 +18,7 @@ class Unit(object):
 class Constant(Unit):
     def __init__(self, data, start, end):
         Unit.__init__(self, data, start, end)
-        self.value = float(data)
+        self.value = Decimal(data)
     def evaluate(self, x):
         return self.value
 
@@ -37,49 +37,64 @@ class ObjectRepresentation(object):
         bcnt = 0
         Blist = []
         Lofconst = []                                                                                              
-        fnvar = True
+        parsing_func = False
+        n = ''
         for i in range(len(self.string_repr)):
-            if fnvar:
+            if not parsing_func:
                 if self.string_repr[i] == '(':
                     self.expression.append('Dummy')
                     bcnt += 1
                     Blist.append(len(self.expression)-1)
                     
-                if self.string_repr[i] == ')':
+                elif self.string_repr[i] == ')':
                     posn = Blist.pop(-1)
                     self.expression[posn] = Parenthesis('(',posn,len(self.expression),bcnt)
                     self.expression.append(Parenthesis(')',posn,len(self.expression),bcnt))
                     bcnt -= 1
                     
 
-                if self.string_repr[i] == 'x':
-                    self.expression.append(Variable('x',i,i+1))                                                                     #                         
+                elif self.string_repr[i] == 'x':
+                    self.expression.append(Variable('x',i,i+1))
 
-                for j in UNARY_OPERATORS:
-                    if self.string_repr[i] == j and (self.string_repr[i] in ['('] and self.string_repr[i] in UNARY_OPERATORS) :
-                        self.expression.append(UnaryOperator(j, i, i+1, UNARY_OPERATORS[j]["func"], UNARY_OPERATORS[j]["priority"]))                         #change5
+                elif self.string_repr[i].isdigit() or self.string_repr[i] == '.':
+                    n += self.string_repr[i]
+                    if i == len(self.string_repr)-1 or not (self.string_repr[i+1].isdigit() or self.string_repr[i+1] == '.'):
+                        self.expression.append(Constant(int(n),i,i+1))
+                        n = ''
 
-                for j in BINARY_OPERATORS:
-                    if self.string_repr[i] == j:
-                        self.expression.append(BinaryOperator(j, i, i+1, BINARY_OPERATORS[j]["func"], BINARY_OPERATORS[j]["priority"]))
-                        
-
-                for j in FUNCTIONS:
-                    if self.string_repr[i:(i+len(j))] == j:
-                        data1 = j                                                                                 
-                        start1 = i
-                        fnvar = False
-
-                #afterfn do const
-                if self.string_repr[i] in Lofconst:
-                    self.expression.append(Constant(self.string_repr[i],len(self.expression),len(self.expression)+1))
-            if not fnvar:
-                if i == ')':
-                    stuff = self.string_repr[start1+len(data1)+1:i]
-                    end1 = i
-                    #end2 = len(data1)+len(stuff)+1 ignore
-                    self.expression.append(Function(data1, start1, end1, FUNCTIONS[data1], stuff))
-                    fnvar = True
+                elif self.string_repr[i] in UNARY_OPERATORS and (self.string_repr[i-1] == '(' or self.string_repr[i-1] in BINARY_OPERATORS) :
+                    op = self.string_repr[i]
+                    func = UNARY_OPERATORS[op]["func"]
+                    priority = UNARY_OPERATORS[op]["priority"]
+                    self.expression.append(UnaryOperator(op, i, i+1, func, priority))
+                
+                elif self.string_repr[i] in BINARY_OPERATORS:
+                    op = self.string_repr[i]
+                    func = BINARY_OPERATORS[op]["func"]
+                    priority = BINARY_OPERATORS[op]["priority"]
+                    self.expression.append(BinaryOperator(op, i, i+1, func, priority))
+                
+                elif self.string_repr[i] in CONSTANTS:
+                    self.expression.append(Constant(CONSTANTS[self.string_repr[i]],len(self.expression),len(self.expression)+1))
+                else:
+                    for j in FUNCTIONS:
+                        if self.string_repr[i:(i+len(j))] == j:
+                            func_name = j                                                                                 
+                            func_start = i
+                            parsing_func = False
+                            bcnt += 1
+                            func_b = bcnt
+            else:
+                if self.string_repr[i] == '(':
+                    bcnt += 1
+                elif self.string_repr[i] == ')':
+                    bcnt -= 1
+                    if func_b-1 == bcnt:
+                        func_end = i
+                        func_arg = self.string_repr[func_start+len(func_name):func_end]
+                        func_data = self.string_repr[func_start:func_end]
+                        self.expression.append(Function(func_data, func_start, func_end, FUNCTIONS[func_name], func_arg))
+                        parsing_func = True
 
 class Parenthesis(Unit):
     '''
@@ -134,7 +149,7 @@ class Stack(object):
         if self.stack:
             return self.stack[-1]
         else:
-            raise UnderflowException("Stack is empty!!")
+            return None
     def isEmpty(self):
         '''
         Returns True iff stack is empty.
@@ -176,7 +191,7 @@ class PostfixExpression(object):
                     while not isinstance(self.opStack.top(), Parenthesis):
                         self.postfix.append(self.opStack.pop())
                     self.opStack.pop()
-            elif isinstance(obj, Operator):
+            elif isinstance(obj, BinaryOperator):
                 while not self.opStack.isEmpty():
                     current = self.opStack.top()
                     if isinstance(current, Operator):
@@ -187,6 +202,12 @@ class PostfixExpression(object):
                     else:
                         break
                 self.opStack.push(obj)
+            elif isinstance(obj, UnaryOperator):
+                self.opStack.push(obj)
+                continue
+
+            if isinstance(self.opStack.top(), UnaryOperator):
+                self.postfix.append(self.opStack.pop())
     def evaluate(self, x):
         '''
         Evaluate the postfix Expression for a given vakue of x.
@@ -196,13 +217,13 @@ class PostfixExpression(object):
         evaluation = Stack()
         expression = list(self.postfix)
         for current in expression:
-            if isinstance(current, Variable) or isinstance(current, Constant):
+            if isinstance(current, Variable) or isinstance(current, Constant)  or isinstance(current, Function):
                 evaluation.push(current.evaluate(x))
             elif isinstance(current, BinaryOperator):
                 right = evaluation.pop()
                 left = evaluation.pop()
                 evaluation.push(current.evaluate(left,right))
-            elif isinstance(current, UnaryOperator) or isinstance(current, Function):
+            elif isinstance(current, UnaryOperator):
                 arg = evaluation.pop()
                 evaluation.push(current.evaluate(arg))
         return evaluation.pop()
@@ -259,19 +280,11 @@ class Function(Unit):
     def __init__(self, data, start, end, func, stuffinside):
         Unit.__init__(self, data, start, end)
         self.func = func
-        self.inside = stuffinside
+        self.expr = Expression(stuffinside)
     def evaluate(self, x):
         return self.func(self.expr.evaluate(x))
 
 
 # Expressions with only variables work:
-x = Expression("x^x^x+x^x+x")
+x = Expression("x^-(-2-x)+3")
 print x.evaluate(3)
-
-# Here is another one with brackets.
-
-y = Expression("((x+x)*x)+x^(x+x)")
-print y.evaluate(5)
-
-# It fails if you add any type of constant number, special math constants or function.............
-# (Rectify it xD.) 
