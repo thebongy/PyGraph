@@ -1,16 +1,39 @@
+class Rect(object):
+    def __init__(self,pos, size):
+        self.tl = pos
+        self.tr = Point(pos.x+size.width, pos.y)
+        self.bl = Point(pos.x, pos.y + size.height)
+        self.br = Point(pos.x + size.width, pos.y+ size.height)
+
+        self.left = pos.x
+        self.right = pos.x + self.width
+        self.top = pos.y
+        self.bottom = pos.y+ self.height
+
+        self.center = Point((pos.x+size.width)/2, (pos.y+size.height)/2)
+    
+    def inRect(self,Point):
+        if (self.left <= Point.x <= self.right) and (self.top <= Point.y <= self.bottom):
+            return True
+        return False
+
 class Size(object):
-    def __init__(self,width,height)
+    def __init__(self, width, height):
         self.width = width
         self.height = height
-        
-        self.x = width-1 # Last x_coordinate on the Size
-        self.y = height-1 # Last y_cordinate on the Size
 
-    def __repr__(self):
-        self.dict_rep = {"width":width,"height":height}
-        return self.dict_rep
 
-def Point(object):
+class Point(object):
     def __init__(self,x,y):
         self.x = x
         self.y = y
+
+class Surface(object):
+    def __init__(self, rect, data):
+        self.rect = rect
+        self.data = data
+    
+    def draw(self, surface):
+        for x in range(surface.rect.left, surface.rect.right):
+            for y in range(surface.rect.top, surface.rect.bottom):
+                self.data[y][x] = surface.data[y-surface.rect.top][x-surface.rect.left]
