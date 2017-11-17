@@ -23,7 +23,14 @@ class Axis(Surface):
             graph = event.graph
             graph.draw(self)
 
-
+class Graph(Surface):
+	def __init_(self):
+		raise NotImplementedError
+	def plot(self, x, y):
+		raise NotImplementedError
+	def update(self):
+		# Catch The Display Event
+		raise NotImplementedError
 
 class XAxis(Axis):
     pass

@@ -31,7 +31,7 @@ class Point(object):
 class Text(Surface):
 	def __init__(self, text, rect):
 		Surface.__init__(self, rect, list(text))
-
+		self.text = text
 
 class Surface(object):
     def __init__(self, rect, data):

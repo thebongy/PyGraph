@@ -1,4 +1,8 @@
 from inputhandler import InputHandler
+class OptionSelectedEvent():
+	def __init__(self, name):
+		self.name = name
+
 def get_title():
 	title = open("title.txt")
 	title_data = []
@@ -8,10 +12,14 @@ def get_title():
 
 
 class Menu():
-	def __init__(self, Terminal, EventManager):
+	def __init__(self,EventManager):
+		self.ev = EventManager
 		EventManager.add_listener(ArrowKey,self)
 		EventManager.add_listener(EnterKey, self)
+		EventManager.add_listener(Display, self)
 		self.currentOption = 0
+		self.option_selected = False
+		
 		graphpos = 0
 		graphlen = 5
 		graphrect = Rect(graphpos,graphlen)
@@ -33,13 +41,12 @@ class Menu():
 		titledata = get_title()
 		self.titleSurface = Surface(titlerect, titledata)
 		
-		self.options = [Text("Graph", graphrect), Text("Help", helprect), Text("Exit", exitrect)]
-		self.T = Terminal
+		self.options = [Text("Graph", graphrect), Text("Help", helprect), Text("About", aboutrect), Text("Exit", exitrect)]
 	
-	def display(self):
-		self.T.draw(self.titleSurface)
+	def display(self, terminal):
+		terminal.draw(self.titleSurface)
 		for op in self.options:
-			self.T.draw(op)
+			terminal.draw(op)
 	
 	def update(self, event):
 		if isinstance(event, ArrowKey):
@@ -54,8 +61,40 @@ class Menu():
 					self.currentOption -= 1
 				else:
 					self.currentOption = 3
+			
 		elif isinstance(event, EnterKey):
-			pass
+			self.option_selected = True
+		elif isinstance(event, Display):
+			if self.option_selected:
+				self.ev.update(OptionSelectedEvent(self.options[self.option_selected].text))
+
+				
+def Graph(terminal):
+	print "Graph Selected"
+
+def Help(terminal):
+	
+	
+class OptionHandler(object):
+	def __init__(self, EventManager):
+		self.ev =  EventManager
+		self.option_selected = False
+		self.options = {
+			"Graph": Graph,
+			"Help": Help,
+			"About": About,
+			"Exit": Exit
+		}
+		EventManager.add_listener(OptionSelectedEvent, self)
+		EventManager.add_listener(Display, self)
+		EventManager.add_listener(EnterKey, self)
+		
+	def update(self, event):
+		if isinstance(event, OptionSelectedEvent):
+			self.option_selected = event.name
+		elif isinstance(event, Display):
+			self.options[self.option_selected](event.terminal)
+				
 	
 		
 	
