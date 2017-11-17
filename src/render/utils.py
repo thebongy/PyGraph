@@ -28,6 +28,11 @@ class Point(object):
         self.x = x
         self.y = y
 
+class Text(Surface):
+	def __init__(self, text, rect):
+		Surface.__init__(self, rect, list(text))
+
+
 class Surface(object):
     def __init__(self, rect, data):
         self.rect = rect
