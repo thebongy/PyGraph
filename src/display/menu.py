@@ -1,4 +1,4 @@
-from inputhandler import InputHandler
+
 class OptionSelectedEvent():
 	def __init__(self, name):
 		self.name = name
@@ -11,7 +11,7 @@ def get_title():
 	return title_data
 
 
-class Menu():
+class Menu(object):
 	def __init__(self,EventManager):
 		self.ev = EventManager
 		EventManager.add_listener(ArrowKey,self)
@@ -70,10 +70,10 @@ class Menu():
 
 				
 def Graph(terminal):
-	print "Graph Selected"
+	pass
 
 def Help(terminal):
-	
+	pass
 	
 class OptionHandler(object):
 	def __init__(self, EventManager):

@@ -9,14 +9,14 @@ import os,math
 W, H = 120,50
 SCALEx = 0.1
 SCALEy = 0.1
-os.system("mode %s, %s" % (W+1,H+1))
+
 def cls():
         os.system("cls")
 
 data = [[" " for i in range(W)] for j in range(H)]
 
-X = [SCALEx * i for i in range(0,W)]
-Y = [SCALEy * i for i in range(0,H)]
+X = [(SCALEx * i) for i in range(0,W)]
+Y = [-2 + (SCALEy * i) for i in range(0,H)]
 
 GOP = []
 GOPI = []
@@ -86,7 +86,7 @@ def display():
 for i in X:
         try:
 ##                plot(i,-((i-60)**2)/40.0+75)
-                plot(i,1.0/(math.tan(i)))
+                plot(i,math.sin(i))
         except:
                 pass
 
@@ -96,24 +96,24 @@ for i in range(1,len(Clist)-1):
                         for j in range(len(data)):
                                 if data[j][i] == '*':
                                         break
-                                data[j][i] = '%'
+                                #data[j][i] = '%'
                 if Clist[i-1] == '<':
                         for j in range(len(data)):
                                 if data[len(data)-1-j][i] == '*':
                                         break
-                                data[len(data)-1-j][i] = '%'
+                                #data[len(data)-1-j][i] = '%'
 
         if Clist[i] == 'D' and i != len(Clist)-1:
                 if Clist[i+1] == '>':
                         for j in range(len(data)):
                                 if data[j][i] == '*':
                                         break
-                                data[j][i] = '%'
+                                #data[j][i] = '%'
                 if Clist[i+1] == '<':
                         for j in range(1,len(data)-1):
                                 if data[len(data)-j][i] == '*':
                                         break
-                                data[len(data)-j][i] = '%'
+                                #data[len(data)-j][i] = '%'
                                 
         
 

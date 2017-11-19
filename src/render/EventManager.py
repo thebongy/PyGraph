@@ -1,9 +1,5 @@
 from weak_bound_method import WeakBoundMethod
 
-class Event(object):
-    pass
-
-
 class EventManager(object):
     def __init__(self):
         self.listeners = dict()

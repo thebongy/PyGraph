@@ -1,5 +1,5 @@
 import platform
-from subsystem import call
+from os import system
 
 class Terminal(object):
     def __init__(self,size):
@@ -7,18 +7,18 @@ class Terminal(object):
 
         if self.os == "Windows":
             self.clear_command = "cls"
-            self.resize_command = "mode %(width)s,%(height)s"
+            self.resize_command = "mode %s,%s" % (size.width, size.height)
         else:
             self.clear_command = "clear"
-            self.resize_command = "printf '\e[8;%(height)s;%(width)st'"
+            self.resize_command = "printf '\e[8;%s;%st'" % (size.height, size.width)
         
         self.resize_screen(size)
         self.clear_screen()
 
     def clear_screen(self):
         # Clear Terminal/CMD screen
-        call([self.clear_command])
+        system(self.clear_command)
 
     def resize_screen(self,size):
-        call([self.resize_command % size])
+        system(self.resize_command)
 

@@ -1,3 +1,14 @@
+class Surface(object):
+    def __init__(self, rect, data):
+        self.rect = rect
+        self.data = data
+    
+    def draw(self, surface):
+        for x in range(surface.rect.left, surface.rect.right):
+            for y in range(surface.rect.top, surface.rect.bottom):
+                self.data[y][x] = surface.data[y-surface.rect.top][x-surface.rect.left]
+
+
 class Rect(object):
     def __init__(self,pos, size):
         self.tl = pos
@@ -33,12 +44,3 @@ class Text(Surface):
 		Surface.__init__(self, rect, list(text))
 		self.text = text
 
-class Surface(object):
-    def __init__(self, rect, data):
-        self.rect = rect
-        self.data = data
-    
-    def draw(self, surface):
-        for x in range(surface.rect.left, surface.rect.right):
-            for y in range(surface.rect.top, surface.rect.bottom):
-                self.data[y][x] = surface.data[y-surface.rect.top][x-surface.rect.left]
