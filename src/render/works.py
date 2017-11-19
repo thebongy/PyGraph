@@ -7,7 +7,7 @@ for i, j in enumerate(M):
 
 import os,math
 W, H = 120,50
-SCALEx = 0.1
+SCALEx = 0.05
 SCALEy = 0.1
 
 def cls():
@@ -15,8 +15,8 @@ def cls():
 
 data = [[" " for i in range(W)] for j in range(H)]
 
-X = [(SCALEx * i) for i in range(0,W)]
-Y = [-2 + (SCALEy * i) for i in range(0,H)]
+X = [-2+(SCALEx * i) for i in range(0,W)]
+Y = [-3 + (SCALEy * i) for i in range(0,H)]
 
 GOP = []
 GOPI = []
@@ -86,7 +86,7 @@ def display():
 for i in X:
         try:
 ##                plot(i,-((i-60)**2)/40.0+75)
-                plot(i,math.sin(i))
+                plot(i,math.asin(i))
         except:
                 pass
 

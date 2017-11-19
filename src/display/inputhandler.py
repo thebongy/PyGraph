@@ -12,6 +12,8 @@ class EnterKey():
 class EscapeKey():
 	pass
 
+class Display():
+	pass
 def InputHandler(EventManager):
 	x = ord(getch())
 	if (x == 224):
@@ -22,5 +24,3 @@ def InputHandler(EventManager):
 		EventManager.update(EnterKey())
 	elif (x==27):
 		EventManager.update(EscapeKey())
-		
-InputHandler()

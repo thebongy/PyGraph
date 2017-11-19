@@ -1,0 +1,23 @@
+PyGraph is a application built in Python to graph mathematical expressions on CMD using special characters.
+
+--------------------------------------------------------------------------
+How The App works:
+    1. The equation is entered into the program as a string, upon which the program first converts this string into a list of objects (tokenisation), and then converts the expression to its PostFix Form.
+    2. The Postfix Form is used to evaluate the equation at various values of x, to obtain points which can be graphed on the screen.
+
+--------------------------------------------------------------------------
+Code Structure:
+
+    1. The code is seperated into 3 components: The Menu Display, The Postfix Parser, and the Graph Plotter (render).
+    1. The code consistos of usage of various Python Concepts like Classes, File Handling, 2D List Mainpulation, Inheritance, etc.
+
+NO EXTERNAL MODULES WERE USED TO CREATE THIS PROJECT.
+
+--------------------------------------------------------------------------
+
+Created by Apurva, and Rishit for the Computer Science Class XII Project.
+
+--------------------------------------------------------------------------
+The Project and its code can also be found at https://github.com/thebongy/PyGraph on Github.
+
+--------------------------------------------------------------------------
