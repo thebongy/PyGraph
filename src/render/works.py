@@ -1,8 +1,8 @@
 from decimal import Decimal
 
-M = [i+10 for i in range(5)]
-for i, j in enumerate(M):
-        print i,j
+##M = [i+10 for i in range(5)]
+##for i, j in enumerate(M):
+##        print i,j
 
 
 import os,math
@@ -23,6 +23,7 @@ GOPI = []
 Clist = []
 
 
+
 def plot(x,y):
         x = X.index(x)
         valid_Y = []
@@ -30,11 +31,12 @@ def plot(x,y):
         t1 = True
         if y < Y[0] or y > Y[-1]:
                 try:
-                        GOP.append(GOP[-1])
-                        GOPI.append(GOP[-1])
+                        GOP.append(y)
+                        GOPI.append(y)
                 except:
                         pass
                 Clist.append('D')
+
                 return
         t = True
         for i,j in enumerate(Y):
@@ -51,18 +53,22 @@ def plot(x,y):
                         GOPI.append(i)
                         t = False
                 if len(GOP) > 1 and not t:
+                        print 'y'
                         if (GOP[-1]-GOP[-2]) > SCALEy:
-                                Clist.append('>')
                                 for g in range(GOPI[-2], (GOPI[-2]+GOPI[-1])/2):
                                         data[H-1-g][x-1] = "@"
                                 for g in range((GOPI[-2]+GOPI[-1])/2, GOPI[-1]):
                                         data[H-1-g][x] = "#"
                         elif (GOP[-2]-GOP[-1]) > SCALEy:
-                                Clist.append('<')
                                 for g in range((GOPI[-2]+GOPI[-1])/2-1,GOPI[-2]):
                                         data[H-1-g][x-1] = "@"
                                 for g in range(GOPI[-1], (GOPI[-2]+GOPI[-1])/2):
                                         data[H-1-g][x] = "#"
+                                        
+                        if GOP[-1] > GOP[-2]:
+                                Clist.append('>')
+                        if GOP[-1] < GOP[-2]:
+                                Clist.append('<')
                         else:
                                 Clist.append('=')
                         return
@@ -83,11 +89,29 @@ def display():
 ##        count+=1
 ##        current = initial + count*delta
 ##data[49][119] = '*'
+
+##for i in X:
+##        try:
+####                plot(i,(1-(i)**2)**0.5)
+####                plot(i,-(1-(i)**2)**0.5)
+##                plot(i,(math.sin(i)))
+##                print i,len(Clist)
+##                if i > 100:
+##                        break
+##        except:
+##                pass
 for i in X:
         try:
-##                plot(i,-((i-60)**2)/40.0+75)
-                plot(i,1.0/(math.tan(i)))
+##                plot(i,(1-(i)**2)**0.5)
+##                plot(i,-(1-(i)**2)**0.5)
+                plot(i,(math.arcsin(i)))
+                print i,len(Clist),Clist[-1]
+                if i > 20:
+                        break
+                
         except:
+                if i !=0 :
+                        Clist.append('D')
                 pass
 
 for i in range(1,len(Clist)-1):
@@ -98,26 +122,29 @@ for i in range(1,len(Clist)-1):
                                         break
                                 data[j][i] = '%'
                 if Clist[i-1] == '<':
-                        for j in range(len(data)):
-                                if data[len(data)-1-j][i] == '*':
+                        for j in range(1,len(data)):
+                                if data[len(data)-j][i+1] == '*':
                                         break
-                                data[len(data)-1-j][i] = '%'
+                                data[len(data)-j][i+1] = '%'
 
         if Clist[i] == 'D' and i != len(Clist)-1:
                 if Clist[i+1] == '>':
-                        for j in range(len(data)):
-                                if data[j][i] == '*':
+                        for j in range(1,len(data)):
+                                if data[len(data)-j][i+3] == '*':
                                         break
-                                data[j][i] = '%'
+                                data[j][i+3] = '%'
                 if Clist[i+1] == '<':
-                        for j in range(1,len(data)-1):
-                                if data[len(data)-j][i] == '*':
+                        for j in range(1,len(data)):
+                                if data[j][i+1] == '*':
                                         break
-                                data[len(data)-j][i] = '%'
+                                data[j][i+1] = '&'
                                 
         
+'''Attempt 2'''
+
 
         
 
 display()
+##print Clist
 print len(Clist)   
