@@ -23,5 +23,12 @@ class EventManager(object):
 		Note:
 		event is the event OBJECT.
 		'''
+		obsolete = []
 		for listener in self.listeners[event.__class__]:
-			listener().update(event)
+			refer = listener()
+			if refer != None:
+				refer.update(event)
+			else:
+				obsolete.append(listener)
+		for obj in obsolete:
+			self.listeners[event.__class__].remove(obj)

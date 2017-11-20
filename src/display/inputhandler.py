@@ -34,5 +34,7 @@ def InputHandler(EventManager):
 		EventManager.update(EscapeKey())
 	elif (x==8):
 		EventManager.update(BackSpace())
+	elif (chr(x) == 'q'): #ONLY FOR DEV VERSION
+		exit()
 	else:
 		EventManager.update(KeyPress(x))

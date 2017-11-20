@@ -81,8 +81,9 @@ class MainContent(object):
 		self.terminal = terminal
 		self.showing = False
 		self.titleSurface = Text(Point(0,1),title.center(100))
-		self.mainBorder = Rectangle(Point(2,5), Size(110,40))
-		self.content = Surface(Point(3,3), [[]])
+		self.mainBorder = Rectangle(Point(2,5), Size(115,44))
+		self.contentSize = Size(112, 37)
+		self.content = Surface(Point(3,6), [[]])
 		self.misc = [] # All other required elements
 	def display(self):
 		self.beforeDisplayHooks()
@@ -135,19 +136,45 @@ class EquationInput(MainContent):
 				self.display()
 			elif isinstance(event, EnterKey):
 				try:
-					expr = Expression(self.input_box.text)
+					if self.input_box.text != "":
+						expr = Expression(self.input_box.text)
+						self.showing = False
+						self.clear_errors()
+						self.Graph_display = Graph(self.ev, self.terminal, expr, self)
+						self.Graph_display.display()
 				except Exception as e:
 					if isinstance(self.misc[-1], Text):
 						self.misc.pop()
 					
 					self.misc.append(Text(Point(8, 30), "Error!!!  " + e.message))
 					self.display()
+	
+	def beforeDisplayHooks(self):
+		self.Graph_display = None
+	
 	def clear_errors(self):
 		if isinstance(self.misc[-1], Text):
 			self.misc.pop()
 
 class Graph(MainContent):
-	pass
+	def __init__(self, ev, terminal, expr, eqInput):
+		MainContent.__init__(self, "Graph of " + expr.raw_expr, ev, terminal)
+		self.eqInput = eqInput
+		ev.add_listener(EscapeKey, self)
+		ev.add_listener(ArrowKey, self)
+		self.content.data = [[" " for i in range(self.contentSize.width)] for j in range(self.contentSize.height)]
+	def update(self, event):
+		if self.showing:
+			if isinstance(event, EscapeKey):
+				self.showing = False
+				self.eqInput.display()
+	def plot_function(self):
+		pass
+	def plot(self, x,y):
+		pass
+		
+		
+		
 class Help(MainContent):
 	def __init__(self, ev, t):
 		MainContent.__init__(self, "Help", ev, t)

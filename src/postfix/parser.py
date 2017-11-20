@@ -163,7 +163,7 @@ class Expression(object):
 	objects out of them. Has methods to return value of a function given args.
 	'''
 	def __init__(self, raw_expr):
-		self.raw_expr = "(" + raw_expr + ")" # Standard postfix rules to add parenthesis.
+		self.raw_expr = "(" + raw_expr.replace(" ","") + ")" # Standard postfix rules to add parenthesis.
 		self.expr = ObjectRepresentation(self.raw_expr)
 		self.postfix = PostfixExpression(self.expr)
 	def evaluate(self, x):
