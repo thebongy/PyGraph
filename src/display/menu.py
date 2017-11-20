@@ -108,6 +108,7 @@ class MainContent(object):
 class EquationInput(MainContent):
 	def __init__(self, ev, terminal):
 		MainContent.__init__(self, "Graph", ev, terminal)
+		self.block_enter_key = True
 		self.input_box = InputBox(Point(8,25), 90)
 		self.inputPrompt = Paragraph(Point(6, 20), Size(100,4),
 		"""Please type in the math equation/function in the box below:
@@ -123,6 +124,7 @@ class EquationInput(MainContent):
 		if self.showing:
 			if isinstance(event, EscapeKey):
 				self.showing = False
+				self.block_enter_key = True
 				self.input_box.clearInput()
 				self.clear_errors()
 				self.ev.update(DisplayMainMenu())
@@ -135,6 +137,9 @@ class EquationInput(MainContent):
 				self.clear_errors()
 				self.display()
 			elif isinstance(event, EnterKey):
+				if self.block_enter_key:
+					self.block_enter_key = False
+					return
 				try:
 					if self.input_box.text != "":
 						expr = Expression(self.input_box.text)
@@ -142,6 +147,8 @@ class EquationInput(MainContent):
 						self.clear_errors()
 						self.Graph_display = Graph(self.ev, self.terminal, expr, self)
 						self.Graph_display.display()
+					else:
+						raise ValueError("Equation cannot be blank!!!")
 				except Exception as e:
 					if isinstance(self.misc[-1], Text):
 						self.misc.pop()
@@ -163,13 +170,51 @@ class Graph(MainContent):
 		ev.add_listener(EscapeKey, self)
 		ev.add_listener(ArrowKey, self)
 		self.content.data = [[" " for i in range(self.contentSize.width)] for j in range(self.contentSize.height)]
+	
 	def update(self, event):
 		if self.showing:
 			if isinstance(event, EscapeKey):
 				self.showing = False
 				self.eqInput.display()
+			elif isinstance(event, ArrowKey):
+				if (event.direction == RIGHT):
+					self.move_right()
+				elif (event.direction == LEFT):
+					self.move_left()
+				elif (event.direction == UP):
+					self.move_up()
+				elif (event.direction == DOWN):
+					self.move_down()
+				self.display()
+			elif isinstance(event, KeyPress):
+				if chr(event.code) == "Z":
+					self.zoom_in()
+					self.display()
+				elif chr(event.code) == "z":
+					self.zoom_out()
+					self.display()
+	
+	def move_right(self):
+		pass
+	
+	def move_left(self):
+		pass
+	
+	def move_up(self):
+		pass
+	
+	def move_down(self):
+		pass
+	
+	def zoom_in(self):
+		pass
+	
+	def zoom_out(self):
+		pass
+	
 	def plot_function(self):
 		pass
+	
 	def plot(self, x,y):
 		pass
 		
@@ -214,8 +259,6 @@ class OptionHandler(object):
 		
 		EventManager.add_listener(OptionSelectedEvent, self)
 		EventManager.add_listener(OptionHighlightedEvent, self)
-		EventManager.add_listener(Display, self)
-		EventManager.add_listener(EnterKey, self)
 		
 		self.highlightOption()
 	def highlightOption(self):
