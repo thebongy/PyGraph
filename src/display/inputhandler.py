@@ -12,8 +12,16 @@ class EnterKey():
 class EscapeKey():
 	pass
 
+class BackSpace():
+	pass
+
+class KeyPress():
+	def __init__(self, code):
+		self.code = code
+
 class Display():
 	pass
+
 def InputHandler(EventManager):
 	x = ord(getch())
 	if (x == 224):
@@ -24,3 +32,7 @@ def InputHandler(EventManager):
 		EventManager.update(EnterKey())
 	elif (x==27):
 		EventManager.update(EscapeKey())
+	elif (x==8):
+		EventManager.update(BackSpace())
+	else:
+		EventManager.update(KeyPress(x))

@@ -1,5 +1,7 @@
 from inputhandler import *
 from render.utils import *
+from postfix.parser import Expression
+
 class OptionSelectedEvent():
 	def __init__(self, no):
 		self.no = no
@@ -80,32 +82,72 @@ class MainContent(object):
 		self.showing = False
 		self.titleSurface = Text(Point(0,1),title.center(100))
 		self.mainBorder = Rectangle(Point(2,5), Size(110,40))
-		self.content = None # Should be inside border
+		self.content = Surface(Point(3,3), [[]])
 		self.misc = [] # All other required elements
 	def display(self):
+		self.beforeDisplayHooks()
 		self.terminal.clear_data()
 		self.showing = True
 		self.terminal.draw(self.titleSurface)
 		self.terminal.draw(self.mainBorder)
 		self.terminal.draw(self.content)
 		for obj in self.misc:
-			self.terminal.draw(self.misc)
+			self.terminal.draw(obj)
 		self.terminal.update_screen()
+		self.afterDisplayHooks()
 	def update(self, event):
 		raise NotImplementedError
+	
+	def beforeDisplayHooks(self):
+		pass
+	
+	def afterDisplayHooks(self):
+		pass
 
-
-class Graph(MainContent):
+class EquationInput(MainContent):
 	def __init__(self, ev, terminal):
 		MainContent.__init__(self, "Graph", ev, terminal)
-		ev.add_listener(ArrowKey, self)
+		self.input_box = InputBox(Point(8,25), 90)
+		self.inputPrompt = Paragraph(Point(6, 20), Size(100,4),
+		"""Please type in the math equation/function in the box below:
+(Press Enter when you are Done)""")
+		self.misc.append(self.input_box)
+		self.misc.append(self.inputPrompt)
+		ev.add_listener(EnterKey, self)
 		ev.add_listener(EscapeKey, self)
+		ev.add_listener(KeyPress, self)
+		ev.add_listener(BackSpace, self)
+		
 	def update(self, event):
 		if self.showing:
 			if isinstance(event, EscapeKey):
 				self.showing = False
+				self.input_box.clearInput()
+				self.clear_errors()
 				self.ev.update(DisplayMainMenu())
+			elif isinstance(event, KeyPress):
+				self.input_box.input(chr(event.code))
+				self.clear_errors()
+				self.display()
+			elif isinstance(event, BackSpace):
+				self.input_box.backSpace()
+				self.clear_errors()
+				self.display()
+			elif isinstance(event, EnterKey):
+				try:
+					expr = Expression(self.input_box.text)
+				except Exception as e:
+					if isinstance(self.misc[-1], Text):
+						self.misc.pop()
+					
+					self.misc.append(Text(Point(8, 30), "Error!!!  " + e.message))
+					self.display()
+	def clear_errors(self):
+		if isinstance(self.misc[-1], Text):
+			self.misc.pop()
 
+class Graph(MainContent):
+	pass
 class Help(MainContent):
 	def __init__(self, ev, t):
 		MainContent.__init__(self, "Help", ev, t)
@@ -137,7 +179,7 @@ class OptionHandler(object):
 		self.terminal = terminal
 		self.option_highlighted = 0
 		self.optionFuncs = [
-			Graph(self.ev, terminal),
+			EquationInput(self.ev, terminal),
 			Help(self.ev, terminal),
 			About(self.ev, terminal)
 		]

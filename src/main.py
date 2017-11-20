@@ -6,7 +6,6 @@ from display.inputhandler import InputHandler
 
 size = Size(120,50)
 
-
 terminal = Terminal(size)
 ev = EventManager()
 menu = MainMenu(ev, terminal)

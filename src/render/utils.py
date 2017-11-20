@@ -85,3 +85,36 @@ class Paragraph(Surface):
 			data.append(line_data)
 		data = data[:max_size.height]
 		Surface.__init__(self, tl, data)
+
+class InputBox(Surface):
+	def __init__(self, tl, width):
+		data = [[" " for i in range(width)] for i in range(3)]
+		for i in range(1,width-1):
+			data[0][i] = "_"
+			data[2][i] = "-"
+		data[1][0] = "|"
+		data[1][-1] = "|"
+		self.text = ""
+		self.max_text_len = width-2
+		self.current_char = 1
+		data[1][1] = "_"
+		Surface.__init__(self, tl, data)
+	def input(self, char):
+		if (len(self.text) < self.max_text_len):
+			self.text += char
+			self.data[1][self.current_char] = char
+			if (len(self.text) < self.max_text_len):
+				self.current_char += 1
+				self.data[1][self.current_char] = "_"
+	def backSpace(self):
+		if (len(self.text) > 0):
+			self.data[1][self.current_char] = " "
+			self.current_char -= 1
+			self.data[1][self.current_char] = "_"
+			self.text = self.text[:-1]
+	def clearInput(self):
+		for i in range(1, self.max_text_len+1):
+			self.data[1][i] = " "
+		self.text = ""
+		self.current_char = 1
+		self.data[1][1] = "_"
