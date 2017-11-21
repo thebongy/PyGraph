@@ -6,7 +6,7 @@ from functions import FUNCTIONS
 from constants import CONSTANTS
 from decimal import Decimal # For floating point calcluations
 from components import *
-from stack import Stack
+from stack import Stack,UnderflowException
 
 
 class ObjectRepresentation(object):
@@ -69,15 +69,19 @@ class ObjectRepresentation(object):
 				elif self.string_repr[i] in CONSTANTS:
 					self.expression.append(Constant(Decimal(CONSTANTS[self.string_repr[i]]),len(self.expression),len(self.expression)+1))
 				else:
+					longest_match = 0
+					matched = False
 					for j in FUNCTIONS:
-						if self.string_repr[i:(i+len(j))] == j:
+						if self.string_repr[i:(i+len(j))] == j and len(j) > longest_match:
+							longest_match = len(j)
 							func_name = j																				  
 							func_start = i
 							parsing_func = True
-							bcnt += 1
+							if not matched:
+								bcnt += 1 # Increment bcnt just once
+								matched = True
 							func_b = bcnt
-							break
-					else:
+					if not matched:
 						raise ValueError("Invalid Character " + self.string_repr[i] + " in expression.")
 			else:
 				if self.string_repr[i] == '(':
