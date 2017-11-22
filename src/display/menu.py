@@ -173,7 +173,7 @@ class Graph(MainContent):
 		ev.add_listener(EscapeKey, self)
 		ev.add_listener(ArrowKey, self)
 		ev.add_listener(KeyPress, self)
-		self.content = Surface(Point(3,6), [[" " for i in range(self.contentSize.width)] for j in range(self.contentSize.height)])
+		self.content = Surface(Point(3,8), [[" " for i in range(self.contentSize.width)] for j in range(self.contentSize.height)])
 		self.SCALEx = 0.1
 		self.SCALEy = 0.1
 		self.W = self.contentSize.width
@@ -222,62 +222,54 @@ class Graph(MainContent):
 		pass
 	
 	def plot_function(self):
-		self.X = [(self.SCALEx * i) for i in range(0,self.W)]
-		self.Y = [-2 + (self.SCALEy * i) for i in range(0,self.H)]
+		X = [(self.SCALEx * i) for i in range(0,self.W)]
+		Y = [-2 + (self.SCALEy * i) for i in range(0,self.H)]
 
-		self.GOP = []
-		self.GOPI = []
-		self.Clist = []
-		
-		for i in self.X:
+		GOP = []
+		Clist = ['T','T']
+		prevY = None
+		for i in range(len(X)):
 			try:
-				self.plot(i,self.expr.evaluate(i))
-			except ZeroDivisionError, DomainError:
-				pass
-	
-	def plot(self, x,y):
-		x = self.X.index(x)
-		valid_Y = []
-
-		t1 = True
-		if y < self.Y[0] or y > self.Y[-1]:
-				try:
-						self.GOP.append(GOP[-1])
-						self.GOPI.append(GOP[-1])
-				except:
-						pass
-				self.Clist.append('D')
-				return
-		t = True
-		for i,j in enumerate(self.Y):
-			if j == y and t:
-				self.content.data[self.H-i-1][x] = "*"
-				self.GOP.append(j)
-				self.GOPI.append(i)
-				t = False
-			elif y < j and t:
-				if i!= 0:
-					self.content.data[self.H-i][x] = "*"
-				self.content.data[self.H-i-1][x] = "*"
-				self.GOP.append(j)
-				self.GOPI.append(i)
-				t = False
-			if len(self.GOP) > 1 and not t:
-				if (self.GOP[-1]-self.GOP[-2]) > self.SCALEy:
-					self.Clist.append('>')
-					for g in range(self.GOPI[-2], (self.GOPI[-2]+self.GOPI[-1])/2):
-						self.content.data[self.H-1-g][x-1] = "@"
-					for g in range((self.GOPI[-2]+self.GOPI[-1])/2, self.GOPI[-1]):
-						self.content.data[self.H-1-g][x] = "#"
-				elif (self.GOP[-2]-self.GOP[-1]) > self.SCALEy:
-					self.Clist.append('<')
-					for g in range((self.GOPI[-2]+self.GOPI[-1])/2-1,self.GOPI[-2]):
-						self.content.data[self.H-1-g][x-1] = "@"
-					for g in range(self.GOPI[-1], (self.GOPI[-2]+self.GOPI[-1])/2):
-						self.content.data[self.H-1-g][x] = "#"
+				GOP.append(self.expr.evaluate((X[i])))
+			except ZeroDivisionError:
+				GOP.append(10000000000000000000.0)
+			except Exception as e:
+				print e.message
+			if i > 1:
+				if GOP[-1] > Y[-1] or GOP[-1] < Y[0]:
+					Clist.append('D')
+				elif GOP[-1] > GOP[-2]:
+					Clist.append('>')
+				elif GOP[-1] < GOP[-2]:
+					Clist.append('<')
 				else:
-					self.Clist.append('=')
-				return
+					Clist.append('=')
+
+			t = True
+			for j in range(len(Y)):
+				if Y[j] == GOP[-1] and t:
+					self.content.data[self.H-j-1][i] = "*"
+					t = False
+				elif GOP[-1] < Y[j] and t and GOP[-1] >= Y[0]:
+					if j != 0:
+						self.content.data[self.H-j][i] = "*"
+					self.content.data[self.H-j-1][i] = "*"
+					t = False
+				
+				if (len(GOP) > 1) and (not t) and (j > 1):
+					if (GOP[-1]-GOP[-2]) > self.SCALEy:
+						for g in range(prevY, (prevY+j)/2):
+							self.content.data[self.H-1-g][i-1] = "*"
+						for g in range((prevY+j)/2, j):
+							self.content.data[self.H-1-g][i] = "*"
+					elif (GOP[-2]-GOP[-1]) > self.SCALEy:
+						for g in range((prevY+j)/2-1,prevY):
+							self.content.data[self.H-1-g][i-1] = "*"
+						for g in range(j, (prevY+j)/2):
+							self.content.data[self.H-1-g][i] = "*"
+					break
+			prevY = j
+		
 		
 		
 		

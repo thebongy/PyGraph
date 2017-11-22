@@ -16,7 +16,7 @@ class ObjectRepresentation(object):
 	def __init__(self, expr):
 		self.string_repr = expr.replace(" ","")
 		if self.string_repr.count("(") != self.string_repr.count(")"):
-			raise ValueError("Unmatched parenthesis in equation")
+			raise ValueError("Unmatched parenthesis in equation " + self.string_repr)
 		self.expression = []
 		self.construct()
 
@@ -51,7 +51,7 @@ class ObjectRepresentation(object):
 				elif self.string_repr[i].isdigit() or self.string_repr[i] == '.':
 					n += self.string_repr[i]
 					if i == len(self.string_repr)-1 or not (self.string_repr[i+1].isdigit() or self.string_repr[i+1] == '.'):
-						self.expression.append(Constant(Decimal(n),i,i+1))
+						self.expression.append(Constant(n,i,i+1))
 						n = ''
 
 				elif self.string_repr[i] in UNARY_OPERATORS and (self.string_repr[i-1] == '(' or self.string_repr[i-1] in BINARY_OPERATORS) :
@@ -67,7 +67,7 @@ class ObjectRepresentation(object):
 					self.expression.append(BinaryOperator(op, i, i+1, func, priority))
 				
 				elif self.string_repr[i] in CONSTANTS:
-					self.expression.append(Constant(Decimal(CONSTANTS[self.string_repr[i]]),len(self.expression),len(self.expression)+1))
+					self.expression.append(Constant(CONSTANTS[self.string_repr[i]],len(self.expression),len(self.expression)+1))
 				else:
 					longest_match = 0
 					matched = False
@@ -78,9 +78,8 @@ class ObjectRepresentation(object):
 							func_start = i
 							parsing_func = True
 							if not matched:
-								bcnt += 1 # Increment bcnt just once
+								func_b = bcnt + 1
 								matched = True
-							func_b = bcnt
 					if not matched:
 						raise ValueError("Invalid Character " + self.string_repr[i] + " in expression.")
 			else:
@@ -89,11 +88,11 @@ class ObjectRepresentation(object):
 				elif self.string_repr[i] == ')':
 					bcnt -= 1
 					if func_b-1 == bcnt:
-						func_end = i
+						func_end = i+1
 						func_arg = self.string_repr[func_start+len(func_name):func_end]
 						func_data = self.string_repr[func_start:func_end]
 						self.expression.append(Function(func_data, func_start, func_end, FUNCTIONS[func_name], Expression(func_arg)))
-						parsing_func = True
+						parsing_func = False
 
 class PostfixExpression(object):
 	'''
