@@ -176,6 +176,8 @@ class Graph(MainContent):
 		self.content = Surface(Point(3,8), [[" " for i in range(self.contentSize.width)] for j in range(self.contentSize.height)])
 		self.SCALEx = 0.1
 		self.SCALEy = 0.1
+		self.xCONSTANT = 0
+		self.yCONSTANT = 0
 		self.W = self.contentSize.width
 		self.H = self.contentSize.height
 		self.plot_function()
@@ -187,43 +189,54 @@ class Graph(MainContent):
 				self.eqInput.display()
 			elif isinstance(event, ArrowKey):
 				if (event.direction == RIGHT):
-					self.move_right()
+					self.xCONSTANT += 0.5
 				elif (event.direction == LEFT):
-					self.move_left()
+					self.xCONSTANT -= 0.5
 				elif (event.direction == UP):
-					self.move_up()
+					self.yCONSTANT += 0.5
 				elif (event.direction == DOWN):
-					self.move_down()
+					self.yCONSTANT -= 0.5
+				self.clear_graph()
+				self.plot_function()
 				self.display()
 			elif isinstance(event, KeyPress):
-				if chr(event.code) == "Z":
-					self.zoom_in()
+				valid = True
+				char = chr(event.code)
+				if char == "X":
+					self.SCALEx -= 0.01
+				elif char == "x":
+					self.SCALEx += 0.01
+				elif char == "y":
+					self.SCALEy += 0.01
+				elif char == "Y":
+					self.SCALEy -= 0.01
+				elif char == "r":
+					self.SCALEx = 0.1
+					self.SCALEy = 0.1
+					self.xCONSTANT = 0
+					self.yCONSTANT = 0
+				elif char == "z":
+					self.SCALEx += 0.01
+					self.SCALEy += 0.01
+				elif char == "Z":
+					self.SCALEx -= 0.01
+					self.SCALEy -= 0.01
+				else:
+					valid = False
+				
+				if valid:
+					self.clear_graph()
+					self.plot_function()
 					self.display()
-				elif chr(event.code) == "z":
-					self.zoom_out()
-					self.display()
 	
-	def move_right(self):
-		pass
-	
-	def move_left(self):
-		pass
-	
-	def move_up(self):
-		pass
-	
-	def move_down(self):
-		pass
-	
-	def zoom_in(self):
-		pass
-	
-	def zoom_out(self):
-		pass
-	
+	def clear_graph(self):
+		for i in range(self.contentSize.height):
+			for j in range(self.contentSize.width):
+				self.content.data[i][j] = " "
+				
 	def plot_function(self):
-		X = [(self.SCALEx * i) for i in range(0,self.W)]
-		Y = [-2 + (self.SCALEy * i) for i in range(0,self.H)]
+		X = [(self.xCONSTANT + (self.SCALEx * i)) for i in range(0,self.W)]
+		Y = [(self.yCONSTANT - 2 + (self.SCALEy * i)) for i in range(0,self.H)]
 
 		GOP = []
 		Clist = ['T','T']
