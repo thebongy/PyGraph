@@ -1,1 +1,22 @@
-Lopadotemachoselachogaleokranioleipsanodrimhypotrimmatosilphioparaomelitokatakechymenokichlepikossyphophattoperisteralektryonoptekephalliokigklopeleiolagoiosiraiobaphetraganopterygon
+The Application can be used to view the shape of various graphs, and is not a completely accurate representation of the graph.
+
+You can navigate the Application using the ARROW keys, and options can be selected by pressing the ENTER key.
+
+To graph an application, first move in the Graph menu from the main menu, and then type the mathematical expression in the textbox that shows.
+
+Press Enter to then graph the expression.
+
+If your expression has no errors, then you should be moved to the graph view. Here are the controls for the graphing view:
+-----------------------------------
+KEY		   ACTION
+z          Zoom out
+Z          Zoom in
+x          Zoom out x-axis
+X          Zoom in x-axis
+y          Zoom out y-axis
+Y          Zoom in y-axis
+r          Reset to Initial View
+Arrow Keys Move around graph
+------------------------------------
+
+Have Fun Graphing!

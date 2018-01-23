@@ -31,15 +31,17 @@ class MainMenu(object):
 		EventManager.add_listener(DisplayMainMenu, self)
 		self.currentOption = 0
 		self.showing = True
-		self.titleSurface = Surface(Point(30,20),get_title())
 		
-		self.version = "1.0 Development Version"
-		self.versionSurface = Text(Point(60,30), self.version)
+		self.tagline = Text(Point(40,29), "A CMD Graphing Application written in Python")
+		self.titleSurface = Surface(Point(30,20),get_title())
+		self.version = "Version 1.1"
+		self.versionSurface = Text(Point(60,31), self.version)
+		
 		self.options = [
-		Text(Point(30,35),"Graph"), 
-		Text(Point(50,35), "Help"), 
-		Text(Point(70,35), "About"), 
-		Text(Point(90,35), "Exit")
+		Text(Point(30,38),"Graph"), 
+		Text(Point(50,38), "Help"), 
+		Text(Point(70,38), "About"), 
+		Text(Point(90,38), "Exit")
 		]
 		
 		self.optionHandler = OptionHandler(EventManager, self.options, terminal)
@@ -48,6 +50,7 @@ class MainMenu(object):
 		self.terminal.clear_data()
 		self.showing = True
 		self.terminal.draw(self.titleSurface)
+		self.terminal.draw(self.tagline)
 		self.terminal.draw(self.versionSurface)
 		for op in self.options:
 			self.terminal.draw(op)
@@ -247,7 +250,7 @@ class Graph(MainContent):
 			except ZeroDivisionError:
 				GOP.append(10000000000000000000.0)
 			except Exception as e:
-				print e.message
+				continue
 			if i > 1:
 				if GOP[-1] > Y[-1] or GOP[-1] < Y[0]:
 					Clist.append('D')

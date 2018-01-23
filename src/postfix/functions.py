@@ -14,7 +14,9 @@ FUNCTIONS = {
         "abs": abs,
         "ceil":math.ceil,
         "gif":math.ceil,
-        "floor":math.floor
+        "floor":math.floor,
+		"log":math.log,
+		"cons":lambda x: 5
         }
 
 def add_func(name, func):

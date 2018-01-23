@@ -175,3 +175,18 @@ class Expression(object):
 		except UnderflowException as e:
 			raise ValueError("""Something went wrong while parsing the expression.
 			Either the expression is invalid, or it wasn't parsed correctly...""")
+
+if __name__ == '__main__':
+	x = Expression(raw_input("Enter a mathematical expression"))
+	print "Expression:",x.raw_expr
+	print
+	print "-------------------------------------"
+	print
+	print "String to Object Conversion"
+	print
+	print x.expr.expression
+	print "-------------------------------------"
+	print 
+	print "Object to Postfix Conversion"
+	print
+	print x.postfix.postfix
