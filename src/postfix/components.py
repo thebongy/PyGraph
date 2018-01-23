@@ -2,6 +2,7 @@
 Classes to which represent individual components of a mathematical expression.
 '''
 
+from decimal import Decimal
 
 class Unit(object):
     '''
@@ -38,7 +39,7 @@ class BinaryOperator(Operator):
 class Constant(Unit):
     def __init__(self, data, start, end):
         Unit.__init__(self, data, start, end)
-        self.value = data
+        self.value = Decimal(data)
     def evaluate(self, x):
         return self.value
 
@@ -47,7 +48,7 @@ class Variable(Unit):
         Unit.__init__(self, data, start, end)
         self.var = data
     def evaluate(self, x):
-        return x
+        return Decimal(x)
 
 class Function(Unit):
     def __init__(self, data, start, end, func, expr):
@@ -55,7 +56,7 @@ class Function(Unit):
         self.func = func
         self.expr = expr
     def evaluate(self, x):
-        return self.func(self.expr.evaluate(x))
+        return Decimal(self.func(self.expr.evaluate(x)))
 
 class Parenthesis(Unit):
     '''

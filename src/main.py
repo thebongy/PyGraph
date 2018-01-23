@@ -1,8 +1,16 @@
-t = Size(120,50)
+from render.EventManager import EventManager
+from render.utils import *
+from render.terminal import Terminal
+from display.menu import MainMenu
+from display.inputhandler import InputHandler
 
+size = Size(120,50)
+
+terminal = Terminal(size)
 ev = EventManager()
-menu = Menu(ev)
-menu.display()
+menu = MainMenu(ev, terminal)
 
-terminal = Terminal()
-while True
+def main():
+	while True:
+		InputHandler(ev)
+main()
